@@ -12,6 +12,7 @@ export class UsersController {
     const user = {
       name: body.name,
       email: body.email,
+      socketId: body.socketId,
     }
     const result = await this.userService.add(user)
     res.status(result.code).json(result.content)

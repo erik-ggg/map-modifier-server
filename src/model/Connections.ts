@@ -7,14 +7,14 @@
 //       socket_id: type.STRING,
 //     })
 //   }
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 export class Connections {
   @PrimaryGeneratedColumn()
-  id: number;
-  @Column({ nullable: true })
-  user_id: string;
-  @Column({ nullable: true })
-  socket_id: string;
+  id: number
+  @Column({ nullable: false })
+  user_id: string
+  @Column({ nullable: false })
+  socket_id: string
 }

@@ -13,6 +13,12 @@ export class UsersService {
     private connectionsService: ConnectionsService,
   ) {}
 
+  async findByColaboratorId(userId: any) {
+    return await this.userRepository.query(
+      'SELECT u.email, u.name FROM users u, colaborators col WHERE u.email = col.colaborator_id AND col.user_id = :userId',
+    )
+  }
+
   async add(user: any): Promise<Record<string, any>> {
     const existUser = await this.userRepository.find({
       where: { email: user.email },

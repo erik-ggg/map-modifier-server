@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import e from 'cors'
 import { Connections } from 'src/model/Connections'
 import { Repository } from 'typeorm'
 

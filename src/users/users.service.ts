@@ -15,8 +15,8 @@ export class UsersService {
 
   async findByColaboratorId(userId: any) {
     return await this.userRepository.query(
-      'SELECT u.email, u.name FROM users u, colaborators col WHERE u.email = col.colaborator_id AND col.user_id = :userId',
-    )
+      'SELECT u.email, u.name FROM users u, colaborators col WHERE u.email = col.colaborator_id AND col.user_id = $1',
+    [userId])
   }
 
   async add(user: any): Promise<Record<string, any>> {

@@ -12,10 +12,15 @@ export class ConnectionsService {
     private connectionsRepository: Repository<Connections>,
   ) {}
 
+  async delete(id: string) {
+    this.logger.debug('Deleting connection with id', id)
+    this.connectionsRepository.delete({ socket_id: id })
+  }
+
   async findByUserId(userId) {
     this.logger.debug('Finding connection for user', userId)
     const con = await this.connectionsRepository
-      .find({
+      .findOne({
         where: { user_id: userId },
       })
       .catch((err) => {
@@ -28,6 +33,14 @@ export class ConnectionsService {
   }
 
   async add(connection: any): Promise<Record<string, any>> {
+    const existCon = await this.connectionsRepository.find({
+      where: { user_id: connection.user_id },
+    })
+    if (existCon.length > 0) {
+      await this.connectionsRepository.delete({
+        user_id: connection.user_id,
+      })
+    }
     const con = await this.connectionsRepository
       .save(connection)
       .catch((err) => {

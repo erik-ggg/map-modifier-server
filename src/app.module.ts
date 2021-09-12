@@ -7,7 +7,6 @@ import { UsersModule } from './users/users.module'
 import { ColaboratorsModule } from './colaborators/colaborators.module'
 import { ConnectionsModule } from './connections/connections.module'
 import { ImageModule } from './image-events/image.module'
-import { ImageGateway } from './image-events/image.gateway'
 
 @Module({
   imports: [
@@ -27,9 +26,9 @@ import { ImageGateway } from './image-events/image.gateway'
     UsersModule,
     ColaboratorsModule,
     ConnectionsModule,
-    // ImageModule,
+    ImageModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ImageGateway],
+  providers: [AppService],
 })
 export class AppModule {}

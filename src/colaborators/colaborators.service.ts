@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ConnectionsService } from 'src/connections/connections.service'
 import { Colaborators } from 'src/model/Colaborators'
+import { Connections } from 'src/model/Connections'
 import { UsersService } from 'src/users/users.service'
 import { Repository } from 'typeorm'
 
@@ -25,14 +26,11 @@ export class ColaboratorsService {
       const isOnline = await this.connectionsService.findByUserId(
         colaborator.email,
       )
-      // .query(
-      //   'SELECT c.user_id, c.socket_id FROM connections c WHERE c.user_id = :userId',
-      // )
       this.logger.debug(
         'Checking if colaborators in online',
         JSON.stringify(isOnline),
       )
-      if (isOnline) {
+      if (!(isOnline instanceof Connections)) {
         resAux.push({
           name: colaborator.name,
           email: colaborator.email,
@@ -43,11 +41,10 @@ export class ColaboratorsService {
         resAux.push({
           name: colaborator.name,
           email: colaborator.email,
-          socketId: isOnline[0].socket_id,
+          socketId: isOnline.socket_id,
           isOnline: true,
         })
     }
-    console.log(resAux)
     return resAux
   }
 

@@ -12,8 +12,10 @@ import { Socket } from 'socket.io'
 import { Server } from 'ws'
 import {
   BROADCAST_DRAWING,
+  END_DRAWING,
   RECEIVING_DRAWING,
   SHARE_DRAW_CONFIG,
+  START_DRAWING,
 } from 'src/shared/socket-actions'
 import { ConnectionsService } from 'src/connections/connections.service'
 
@@ -61,17 +63,17 @@ export class ImageGateway
 
   @SubscribeMessage(SHARE_DRAW_CONFIG)
   public shareDrawConfig(client: Socket, payload: any): void {
-    this.logger.debug(
-      `Sharing draw config from ${client.id} to ${payload.room}`,
-    )
-    this.logger.debug(`Draw config ${JSON.stringify(payload.config)}`)
+    // this.logger.debug(
+    //   `Sharing draw config from ${client.id} to ${payload.room}`,
+    // )
+    // this.logger.debug(`Draw config ${JSON.stringify(payload.config)}`)
     client.to(payload.room).emit(SHARE_DRAW_CONFIG, payload.config)
   }
 
   @SubscribeMessage(BROADCAST_DRAWING)
   public broadcastDrawing(client: Socket, payload: any): void {
-    this.logger.log('from', client.id, 'to', payload.room)
-    this.logger.debug(`Draw config ${JSON.stringify(payload.drawConfig)}`)
+    this.logger.debug(`From ${client.id} to ${payload.room}`)
+    // this.logger.debug(`Draw config ${JSON.stringify(payload.drawConfig)}`)
     client.to(payload.room).emit(RECEIVING_DRAWING, {
       prevPos: payload.prevPos,
       currPos: payload.currPos,
@@ -91,6 +93,19 @@ export class ImageGateway
     } else {
       client.emit('already joined')
     }
+  }
+
+  @SubscribeMessage(START_DRAWING)
+  public startDrawing(client: Socket, payload: any): void {
+    this.logger.log(`Client: ${client.id} started drawing`)
+    client.to(payload.room).emit(START_DRAWING, payload.drawConfig)
+    // client.emit('disconnected', room)
+  }
+
+  @SubscribeMessage(END_DRAWING)
+  public endDrawing(client: Socket, payload: any): void {
+    this.logger.log(`Client: ${client.id} ended drawing`)
+    client.to(payload.room).emit(END_DRAWING)
   }
 
   @SubscribeMessage('disconnected')

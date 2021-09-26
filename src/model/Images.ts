@@ -13,8 +13,8 @@ export class Images {
   user_id: string
   @Column({ nullable: false })
   image_location: string
-  @Column({ nullable: false })
-  canvas: string
+  @Column({ type: 'text', nullable: false })
+  canvas_data: string
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',

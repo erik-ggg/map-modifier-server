@@ -24,7 +24,7 @@ export class ColaboratorsController {
     }
     this.logger.log(`Adding colaborator ${colaborator}`)
     const result = await this.colaboratorsService.add(colaborator)
-    console.log(result)
+    this.logger.debug(result)
     res.status(result.code).json(result.content)
   }
 

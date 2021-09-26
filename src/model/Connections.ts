@@ -1,12 +1,3 @@
-// module.exports = (sequelize, type) => {
-//     return sequelize.define("connections", {
-//       user_id: {
-//         type: type.STRING,
-//         unique: true,
-//       },
-//       socket_id: type.STRING,
-//     })
-//   }
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()

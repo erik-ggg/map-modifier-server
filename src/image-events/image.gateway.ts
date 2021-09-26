@@ -12,12 +12,16 @@ import { Socket } from 'socket.io'
 import { Server } from 'ws'
 import {
   BROADCAST_DRAWING,
+  BROADCAST_IMAGE,
   END_DRAWING,
   RECEIVING_DRAWING,
+  RECEIVING_IMAGE,
   SHARE_DRAW_CONFIG,
   START_DRAWING,
 } from 'src/shared/socket-actions'
 import { ConnectionsService } from 'src/connections/connections.service'
+import { throws } from 'assert'
+import e from 'cors'
 
 @WebSocketGateway({
   cors: {
@@ -38,26 +42,22 @@ export class ImageGateway
     client.to(payload.room).emit('receiving data', payload.data)
   }
 
-  @SubscribeMessage('broadcast image')
+  @SubscribeMessage(BROADCAST_IMAGE)
   public broadcastImage(client: Socket, payload: any): void {
     this.logger.debug(
       `Broadcasting map from to ${client.id} to room ${payload.room}`,
     )
+    this.logger.debug(
+      `Rooms debug: ${[...client.rooms]}, ${this.server.clients}`,
+    )
     if (client.id === payload.room) {
-      this.logger.debug(`Client same as room`)
-      // this.server.to(client.id).emit('receiving image', {
-      //   image: payload.image,
-      //   room: payload.room,
-      // })
-      client.to(client.id).emit('receiving image', {
-        image: payload.image,
-        room: client.id,
-      })
+      this.server
+        .to(payload.room)
+        .emit(RECEIVING_IMAGE, { image: payload.image, room: payload.room })
     } else {
-      this.logger.debug(`Client is different from room`)
       client
         .to(payload.room)
-        .emit('receiving image', { image: payload.image, room: payload.room })
+        .emit(RECEIVING_IMAGE, { image: payload.image, room: client.id })
     }
   }
 
@@ -74,16 +74,23 @@ export class ImageGateway
   public broadcastDrawing(client: Socket, payload: any): void {
     this.logger.debug(`From ${client.id} to ${payload.room}`)
     // this.logger.debug(`Draw config ${JSON.stringify(payload.drawConfig)}`)
-    client.to(payload.room).emit(RECEIVING_DRAWING, {
+    this.logger.log(`Rooms debug: ${[...client.rooms]}`)
+    this.server.to(payload.room).emit(RECEIVING_DRAWING, {
       prevPos: payload.prevPos,
       currPos: payload.currPos,
       drawConfig: payload.drawConfig,
+      room: client.id,
     })
   }
 
   @SubscribeMessage('join room')
   public joinRoom(client: Socket, room: string): void {
-    this.logger.debug(`Client current rooms ${JSON.stringify(client.rooms)}`)
+    // this.logger.debug(
+    //   `Host joined clients ${JSON.stringify(
+    //     this.server.sockets.manager.roomClients[room],
+    //   )}`,
+    // )
+    this.logger.debug(`Client current rooms ${[...client.rooms]}`)
     this.logger.debug(`Client is in room ${client.rooms.has(room)}`)
     if (!client.rooms.has(room)) {
       this.logger.debug(`Client with id: ${client.id} joined room ${room}`)
@@ -98,14 +105,15 @@ export class ImageGateway
   @SubscribeMessage(START_DRAWING)
   public startDrawing(client: Socket, payload: any): void {
     this.logger.log(`Client: ${client.id} started drawing`)
-    client.to(payload.room).emit(START_DRAWING, payload.drawConfig)
-    // client.emit('disconnected', room)
+    this.server
+      .to(payload.room)
+      .emit(START_DRAWING, payload.drawConfig, client.id)
   }
 
   @SubscribeMessage(END_DRAWING)
   public endDrawing(client: Socket, payload: any): void {
     this.logger.log(`Client: ${client.id} ended drawing`)
-    client.to(payload.room).emit(END_DRAWING)
+    this.server.to(payload.room).emit(END_DRAWING, client.id)
   }
 
   @SubscribeMessage('disconnected')
@@ -121,11 +129,13 @@ export class ImageGateway
   }
 
   public handleDisconnect(client: Socket): void {
+    this.connectionsService.delete(client.id)
     return this.logger.log(`Client disconnected: ${client.id}`)
   }
 
   public handleConnection(client: Socket): void {
-    client.join(client.id)
+    // client.join(client.id)
+    this.logger.log(`Client rooms when joined: ${[...client.rooms]}`)
     return this.logger.log(`Client connected: ${client.id}`)
   }
 }

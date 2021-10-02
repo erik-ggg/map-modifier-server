@@ -47,9 +47,6 @@ export class ImageGateway
     this.logger.debug(
       `Broadcasting map from to ${client.id} to room ${payload.room}`,
     )
-    this.logger.debug(
-      `Rooms debug: ${[...client.rooms]}, ${this.server.clients}`,
-    )
     if (client.id === payload.room) {
       this.server
         .to(payload.room)
@@ -73,8 +70,6 @@ export class ImageGateway
   @SubscribeMessage(BROADCAST_DRAWING)
   public broadcastDrawing(client: Socket, payload: any): void {
     this.logger.debug(`From ${client.id} to ${payload.room}`)
-    // this.logger.debug(`Draw config ${JSON.stringify(payload.drawConfig)}`)
-    this.logger.log(`Rooms debug: ${[...client.rooms]}`)
     this.server.to(payload.room).emit(RECEIVING_DRAWING, {
       prevPos: payload.prevPos,
       currPos: payload.currPos,
@@ -134,8 +129,6 @@ export class ImageGateway
   }
 
   public handleConnection(client: Socket): void {
-    // client.join(client.id)
-    this.logger.log(`Client rooms when joined: ${[...client.rooms]}`)
     return this.logger.log(`Client connected: ${client.id}`)
   }
 }

@@ -12,6 +12,8 @@ export class Images {
   @Column({ nullable: false })
   user_id: string
   @Column({ nullable: false })
+  image_name: string
+  @Column({ nullable: false })
   image_location: string
   @Column({ type: 'text', nullable: false })
   canvas_data: string

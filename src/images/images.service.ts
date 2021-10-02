@@ -16,6 +16,7 @@ export class ImagesService {
   async save(body: ImageInput): Promise<Record<string, any>> {
     const imageData = {
       user_id: body.userId,
+      image_name: body.imageName,
       image_location: 'test',
       canvas_data: body.canvasData,
     }

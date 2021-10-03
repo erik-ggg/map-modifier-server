@@ -13,6 +13,12 @@ export class ImagesService {
     private colaboratorsRepository: Repository<Images>,
   ) {}
 
+  async getByUserId(userId: string) {
+    return await this.colaboratorsRepository.find({
+      where: { user_id: userId },
+    })
+  }
+
   async save(body: ImageInput): Promise<Record<string, any>> {
     const imageData = {
       user_id: body.userId,

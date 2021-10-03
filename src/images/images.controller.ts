@@ -26,7 +26,8 @@ export class ImagesController {
 
   @Get(':userId')
   async getAll(@Param() params) {
-    // return await this.colaboratorsService.getByUserId(params.userId)
+    this.logger.log(`Loading images request for user ${params.userId}`)
+    return await this.imagesService.getByUserId(params.userId)
   }
 
   @Delete()

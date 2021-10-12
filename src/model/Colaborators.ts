@@ -1,11 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 export class Colaborators {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
   @Column({ nullable: true })
-  user_id: string;
+  user_id: string
   @Column({ nullable: true })
-  colaborator_id: string;
+  colaborator_id: string
 }

@@ -22,4 +22,6 @@ export class Images {
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
   created_at: Date
+  @Column({ type: 'longtext', nullable: false })
+  image_blob: string
 }

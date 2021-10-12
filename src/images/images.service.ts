@@ -25,6 +25,7 @@ export class ImagesService {
       image_name: body.imageName,
       image_location: 'test',
       canvas_data: body.canvasData,
+      image_blob: body.imageBlob,
     }
     this.logger.log('Saving image from user', body.userId)
     const res = await this.colaboratorsRepository

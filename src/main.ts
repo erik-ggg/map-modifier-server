@@ -3,6 +3,7 @@ import { AppModule } from './app.module'
 import 'reflect-metadata'
 // import { RedisIoAdapter } from './adapters/redis.adapter';
 import { NestExpressApplication } from '@nestjs/platform-express'
+import { urlencoded, json } from 'express'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -10,6 +11,8 @@ async function bootstrap() {
       origin: '*',
     },
   })
+  app.use(json({ limit: '50mb' }))
+  app.use(urlencoded({ extended: true, limit: '50mb' }))
   await app.listen(process.env.APP_PORT)
 }
 bootstrap()

@@ -3,4 +3,5 @@ export interface ImageInput {
   imageName: string
   imageData: string
   canvasData: string
+  imageBlob: string
 }

@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import 'reflect-metadata'
-// import { RedisIoAdapter } from './adapters/redis.adapter';
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { urlencoded, json } from 'express'
 

@@ -9,7 +9,7 @@ import {
   Post,
   Res,
 } from '@nestjs/common'
-import { httpReturnManagement } from 'src/shared/utils/HttpReturnManagement'
+import { httpReturnManagementGet } from 'src/shared/utils/HttpReturnManagement'
 import { UsersService } from './users.service'
 
 @Controller('api/users')
@@ -22,7 +22,7 @@ export class UsersController {
   async getUserByEmail(@Param('email') email: string, @Res() res) {
     this.logger.debug(`User GET request: ${email}`)
     const result = await this.userService.getByUserEmail(email)
-    httpReturnManagement(result, res)
+    httpReturnManagementGet(result, res)
   }
 
   @Post()

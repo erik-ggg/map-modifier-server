@@ -12,23 +12,27 @@ export class ConnectionsService {
     private connectionsRepository: Repository<Connections>,
   ) {}
 
-  async delete(id: string) {
-    this.logger.debug('Deleting connection with id', id)
-    this.connectionsRepository.delete({ socket_id: id })
+  async delete(id: string): Promise<Record<string, any>> {
+    this.logger.debug(`Deleting connection for user ${id}`)
+    let result = null
+    this.connectionsRepository.delete({ user_id: id }).catch((err) => {
+      this.logger.error('CONNECTION DELETE ERROR', err)
+      result = { code: 500, content: { message: 'Internal server error' } }
+    })
+    return result || { code: 200, content: { message: 'Connection deleted' } }
   }
 
   async findByUserId(userId) {
     this.logger.debug('Finding connection for user', userId)
+    let result = null
     const con = await this.connectionsRepository
       .findOne({
         where: { user_id: userId },
       })
       .catch((err) => {
         this.logger.error('CONNECTION INSERT ERROR', err)
-        return { code: 500, content: { msg: 'Internal server error' } }
+        result = { code: 500, content: { message: 'Internal server error' } }
       })
-    // if (con.code === 500)
-    //   return { code: 201, content: { msg: 'Connection created' } }
     return con
   }
 
@@ -41,19 +45,14 @@ export class ConnectionsService {
         user_id: connection.user_id,
       })
     }
+    let result = null
     const con = await this.connectionsRepository
       .save(connection)
       .catch((err) => {
-        console.log('CONNECTION INSERT ERROR', err)
-        return { code: 500, content: { msg: 'Internal server error' } }
+        this.logger.error('CONNECTION INSERT ERROR', err)
+        result = { code: 500, content: { message: 'Internal server error' } }
       })
 
-    console.log(con)
-    if (con.code === 500) {
-      console.log('CREATED CONNECTION', con)
-      return { con }
-    } else {
-      return { code: 201, content: { msg: 'Connection created' } }
-    }
+    return result || { code: 201, content: { con } }
   }
 }

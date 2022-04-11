@@ -13,49 +13,82 @@ export class UsersService {
     private connectionsService: ConnectionsService,
   ) {}
 
+  async getByUserEmail(email: string) {
+    this.logger.debug(`Finding user by email ${email}`)
+    let result = null
+    const user = await this.userRepository
+      .findOne({ where: { email: email } })
+      .catch((err) => {
+        this.logger.error(`USER FIND ERROR ${err}`)
+        result = { code: 500, content: { message: 'Internal server error' } }
+      })
+    return result || { code: 200, content: { user } }
+  }
+
   async findByColaboratorId(userId: any) {
-    this.logger.log('Finding colaborators for user', userId)
+    this.logger.debug('Finding colaborators for user', userId)
     const colaborators = await this.userRepository.query(
       'SELECT u.email, u.name FROM users u, colaborators col WHERE u.email = col.colaborator_id AND col.user_id = ?',
       [userId],
     )
-    this.logger.log('Colaborators for found', colaborators)
+    this.logger.debug('Colaborators for found', colaborators)
     return colaborators
   }
 
   async add(user: any): Promise<Record<string, any>> {
-    const existUser = await this.userRepository.find({
-      where: { email: user.email },
+    this.logger.debug(`Saving new user ${user.name} ${user.email}`)
+    let result = null
+    const userCreated = await this.userRepository.save(user).catch((err) => {
+      this.logger.error(`USER INSERT ERROR ${err}`)
+      result = { code: 500, content: { msg: 'Internal server error' } }
     })
-    const newConnection = {
-      user_id: user.email,
-      socket_id: user.socketId,
-    }
-    if (existUser) {
-      return this.connectionsService.add(newConnection)
-      // else {
-      //   console.log('CONNECTION INSERT ERROR')
-      //   return { code: 500, content: { msg: 'Internal server error' } }
-      // }
-    } else {
-      const userCreated = await this.userRepository.save(user).catch((err) => {
-        console.log('USER INSERT ERROR', err)
-        return { code: 500, content: { msg: 'Internal server error' } }
-      })
+    delete userCreated.id
+    return result || userCreated
+    // const existUser = await this.userRepository.find({
+    //   where: { email: user.email },
+    // })
+    // const newConnection = {
+    //   user_id: user.email,
+    //   socket_id: user.socketId,
+    // }
+    // if (existUser) {
+    //   return this.connectionsService.add(newConnection)
+    //   // else {
+    //   //   console.log('CONNECTION INSERT ERROR')
+    //   //   return { code: 500, content: { msg: 'Internal server error' } }
+    //   // }
+    // } else {
+    //   const userCreated = await this.userRepository.save(user).catch((err) => {
+    //     console.log('USER INSERT ERROR', err)
+    //     return { code: 500, content: { msg: 'Internal server error' } }
+    //   })
+    //   if (userCreated) {
+    //     console.log('CREATED USER')
+    //     return this.connectionsService.add(newConnection)
+    //     // else {
+    //     //   console.log('CONNECTION INSERT ERROR')
+    //     //   return { code: 500, content: { msg: 'Internal server error' } }
+    //     // }
+    //   }
+    //   // else {
+    //   //   console.log('USER INSERT ERROR')
+    //   //   return { code: 500, content: { msg: 'Internal server error' } }
+    //   // }
+    // }
+    // return { code: 500, content: { msg: 'Internal server error' } }
+  }
 
-      if (userCreated) {
-        console.log('CREATED USER')
-        return this.connectionsService.add(newConnection)
-        // else {
-        //   console.log('CONNECTION INSERT ERROR')
-        //   return { code: 500, content: { msg: 'Internal server error' } }
-        // }
-      }
-      // else {
-      //   console.log('USER INSERT ERROR')
-      //   return { code: 500, content: { msg: 'Internal server error' } }
-      // }
-    }
-    return { code: 500, content: { msg: 'Internal server error' } }
+  async updateUserSocketId(email: any, socketId: any) {
+    //   this.logger.log('Updating user socketid by email', email)
+    //   const user = await this.userRepository.query(
+    //     ``
+    //   )
+    //   if (user) {
+    //     this.logger.log('Found user', user)
+    //     return { code: 200, content: { user } }
+    //   } else {
+    //     this.logger.log('Error founding user', user)
+    //     return { code: 500, content: { msg: 'Internal server error' } }
+    //   }
   }
 }

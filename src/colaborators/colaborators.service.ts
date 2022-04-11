@@ -88,6 +88,6 @@ export class ColaboratorsService {
       return col
     }
 
-    return await this.getByUserId(colaborator.source)
+    return await this.getByUserId(colaborator.user_id)
   }
 }

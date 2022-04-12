@@ -1,10 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 export class Connections {
-  @PrimaryGeneratedColumn()
-  id: number
-  @Column({ nullable: false })
+  @PrimaryColumn({ nullable: false })
   user_id: string
   @Column({ nullable: false })
   socket_id: string

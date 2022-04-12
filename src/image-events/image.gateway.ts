@@ -5,7 +5,6 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  WsResponse,
 } from '@nestjs/websockets'
 import { Logger } from '@nestjs/common'
 import { Socket } from 'socket.io'
@@ -20,8 +19,6 @@ import {
   START_DRAWING,
 } from 'src/shared/socket-actions'
 import { ConnectionsService } from 'src/connections/connections.service'
-import { throws } from 'assert'
-import e from 'cors'
 
 @WebSocketGateway({
   cors: {

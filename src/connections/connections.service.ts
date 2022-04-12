@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { HttpCode, HttpStatus, Injectable, Logger } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Connections } from 'src/model/Connections'
 import { Repository } from 'typeorm'
@@ -15,11 +15,19 @@ export class ConnectionsService {
   async delete(id: string): Promise<Record<string, any>> {
     this.logger.debug(`Deleting connection for user ${id}`)
     let result = null
-    this.connectionsRepository.delete({ user_id: id }).catch((err) => {
+    this.connectionsRepository.delete({ socket_id: id }).catch((err) => {
       this.logger.error('CONNECTION DELETE ERROR', err)
-      result = { code: 500, content: { message: 'Internal server error' } }
+      result = {
+        code: HttpStatus.INTERNAL_SERVER_ERROR,
+        content: { message: 'Internal server error' },
+      }
     })
-    return result || { code: 200, content: { message: 'Connection deleted' } }
+    return (
+      result || {
+        code: HttpStatus.OK,
+        content: { message: 'Connection deleted' },
+      }
+    )
   }
 
   async findByUserId(userId) {

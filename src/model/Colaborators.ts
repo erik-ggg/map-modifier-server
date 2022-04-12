@@ -8,4 +8,9 @@ export class Colaborators {
   user_id: string
   @Column({ nullable: true })
   colaborator_id: string
+
+  constructor(source: string, target: string) {
+    this.user_id = source
+    this.colaborator_id = target
+  }
 }

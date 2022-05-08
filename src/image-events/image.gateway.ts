@@ -15,6 +15,7 @@ import {
   END_DRAWING,
   RECEIVING_DRAWING,
   RECEIVING_IMAGE,
+  SEND_IMAGE_AND_CANVAS_TO_CLIENT,
   SHARE_DRAW_CONFIG,
   START_DRAWING,
 } from 'src/shared/socket-actions'
@@ -52,6 +53,20 @@ export class ImageGateway
       client
         .to(payload.room)
         .emit(RECEIVING_IMAGE, { image: payload.image, room: client.id })
+    }
+  }
+
+  @SubscribeMessage(SEND_IMAGE_AND_CANVAS_TO_CLIENT)
+  public sendImageFromHostToGuest(client: Socket, payload: any): void {
+    this.logger.debug(
+      `Sending image from host ${client.id} to guest ${payload.clientId}`,
+    )
+    if (client.id !== payload.clientId) {
+      this.server.to(payload.clientId).emit(SEND_IMAGE_AND_CANVAS_TO_CLIENT, {
+        image: payload.image,
+        canvas: payload.canvas,
+        userTarget: payload.clientId,
+      })
     }
   }
 

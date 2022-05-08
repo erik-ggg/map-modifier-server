@@ -10,7 +10,6 @@ export class UsersService {
 
   constructor(
     @InjectRepository(Users) private userRepository: Repository<Users>,
-    private connectionsService: ConnectionsService,
   ) {}
 
   async getByUserEmail(email: string) {
@@ -44,38 +43,6 @@ export class UsersService {
     })
     delete userCreated.id
     return result || userCreated
-    // const existUser = await this.userRepository.find({
-    //   where: { email: user.email },
-    // })
-    // const newConnection = {
-    //   user_id: user.email,
-    //   socket_id: user.socketId,
-    // }
-    // if (existUser) {
-    //   return this.connectionsService.add(newConnection)
-    //   // else {
-    //   //   console.log('CONNECTION INSERT ERROR')
-    //   //   return { code: 500, content: { msg: 'Internal server error' } }
-    //   // }
-    // } else {
-    //   const userCreated = await this.userRepository.save(user).catch((err) => {
-    //     console.log('USER INSERT ERROR', err)
-    //     return { code: 500, content: { msg: 'Internal server error' } }
-    //   })
-    //   if (userCreated) {
-    //     console.log('CREATED USER')
-    //     return this.connectionsService.add(newConnection)
-    //     // else {
-    //     //   console.log('CONNECTION INSERT ERROR')
-    //     //   return { code: 500, content: { msg: 'Internal server error' } }
-    //     // }
-    //   }
-    //   // else {
-    //   //   console.log('USER INSERT ERROR')
-    //   //   return { code: 500, content: { msg: 'Internal server error' } }
-    //   // }
-    // }
-    // return { code: 500, content: { msg: 'Internal server error' } }
   }
 
   async updateUserSocketId(email: any, socketId: any) {

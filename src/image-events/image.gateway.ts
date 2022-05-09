@@ -12,6 +12,9 @@ import { Server } from 'ws'
 import {
   BROADCAST_DRAWING,
   BROADCAST_IMAGE,
+  CONNECTED,
+  DISCONNECT,
+  DISCONNECTED,
   END_DRAWING,
   RECEIVING_DRAWING,
   RECEIVING_IMAGE,
@@ -123,12 +126,12 @@ export class ImageGateway
     this.server.to(payload.room).emit(END_DRAWING, client.id)
   }
 
-  @SubscribeMessage('disconnected')
+  @SubscribeMessage(DISCONNECT)
   public leaveRoom(client: Socket, room: string): void {
     this.logger.log(`Disconnected client: ${client.id}`)
     this.connectionsService.delete(client.id)
     client.leave(room)
-    client.emit('disconnected', room)
+    client.emit(DISCONNECTED, room)
   }
 
   public afterInit(server: Server): void {
@@ -141,6 +144,7 @@ export class ImageGateway
   }
 
   public handleConnection(client: Socket): void {
-    return this.logger.log(`Client connected: ${client.id}`)
+    this.logger.log(`Client connected: ${client.id}`)
+    client.emit(CONNECTED)
   }
 }

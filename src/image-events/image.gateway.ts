@@ -28,6 +28,7 @@ import { ConnectionsService } from 'src/connections/connections.service'
   cors: {
     origin: '*',
   },
+  maxHttpBufferSize: 1e9,
 })
 export class ImageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -95,11 +96,6 @@ export class ImageGateway
 
   @SubscribeMessage('join room')
   public joinRoom(client: Socket, room: string): void {
-    // this.logger.debug(
-    //   `Host joined clients ${JSON.stringify(
-    //     this.server.sockets.manager.roomClients[room],
-    //   )}`,
-    // )
     this.logger.debug(`Client current rooms ${[...client.rooms]}`)
     this.logger.debug(`Client is in room ${client.rooms.has(room)}`)
     if (!client.rooms.has(room)) {

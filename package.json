@@ -1,10 +1,10 @@
 {
   "name": "mm-server-nest",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.0.0",
+  "description": "Map Modifier Server made with NestJS",
+  "author": "Erik Gabriel González García",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",

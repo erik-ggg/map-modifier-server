@@ -11,6 +11,7 @@ import { Socket } from 'socket.io'
 import { Server } from 'ws'
 import {
   BROADCAST_DRAWING,
+  BROADCAST_FIGURE,
   BROADCAST_IMAGE,
   CONNECTED,
   DISCONNECT,
@@ -60,6 +61,19 @@ export class ImageGateway
     }
   }
 
+  @SubscribeMessage(BROADCAST_FIGURE)
+  public broadcastFigure(client: Socket, payload: any): void {
+    this.logger.debug(`From ${client.id} to ${payload.room}`)
+    this.server.to(payload.room).emit(BROADCAST_FIGURE, {
+      prevPosOffsetX: payload.prevPosOffsetX,
+      prevPosOffsetY: payload.prevPosOffsetY,
+      offsetX: payload.offsetX,
+      offsetY: payload.offsetY,
+      room: client.id,
+      drawingFigure: payload.drawingFigure,
+    })
+  }
+
   @SubscribeMessage(SEND_IMAGE_AND_CANVAS_TO_CLIENT)
   public sendImageFromHostToGuest(client: Socket, payload: any): void {
     this.logger.debug(
@@ -76,10 +90,6 @@ export class ImageGateway
 
   @SubscribeMessage(SHARE_DRAW_CONFIG)
   public shareDrawConfig(client: Socket, payload: any): void {
-    // this.logger.debug(
-    //   `Sharing draw config from ${client.id} to ${payload.room}`,
-    // )
-    // this.logger.debug(`Draw config ${JSON.stringify(payload.config)}`)
     client.to(payload.room).emit(SHARE_DRAW_CONFIG, payload.config)
   }
 
